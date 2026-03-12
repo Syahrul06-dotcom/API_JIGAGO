@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JIGAGO — Dokumentasi API</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maroon:      #800000;
+  --maroon-dark: #600000;
+  --maroon-soft: rgba(128,0,0,0.07);
+  --gold:        #D4AF37;
+  --gold-light:  #E8C84A;
+  --gold-soft:   rgba(212,175,55,0.1);
+  --white:       #FFFFFF;
+  --bg:          #F7F5F2;
+  --text:        #1A1A1A;
+  --text-muted:  #8A8A8A;
+  --border:      #E8E4DF;
+  --code-bg:     #141414;
+  --r-sm: 10px; --r-md: 16px; --r-lg: 20px; --r-xl: 24px;
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.09);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+nav {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--maroon), #a00000);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; box-shadow: 0 2px 8px rgba(128,0,0,0.3);
+}
+.logo-text { font-size: 1rem; font-weight: 800; letter-spacing: -0.3px; }
+.logo-text span { color: var(--maroon); }
+.logo-text em {
+  font-style: normal; color: var(--gold); font-size: .7rem;
+  background: var(--gold-soft); padding: 2px 7px; border-radius: 20px;
+  margin-left: 6px; font-weight: 600;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a {
+  text-decoration: none;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--maroon);
+  padding: 9px 20px;
+  border-radius: 12px;
+  transition: all .25s ease;
+  box-shadow: 0 3px 10px rgba(128,0,0,0.2);
+}
+.nav-links a:hover {
+  background: var(--maroon-dark);
+  box-shadow: 0 4px 14px rgba(128,0,0,0.35);
+  transform: translateY(-1px);
+}
+.nav-links a.active {
+  background: var(--gold);
+  color: var(--maroon-dark);
+  box-shadow: 0 3px 12px rgba(212,175,55,0.35);
+}
+
+.page { max-width: 1100px; margin: 0 auto; padding: 44px 40px 80px; }
+
+.page-hero { margin-bottom: 40px; }
+.page-hero h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+.page-hero h1 span { color: var(--maroon); }
+.page-hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; }
+
+.base-url-box {
+  display: inline-flex; align-items: center; gap: 16px;
+  background: var(--maroon); border: none;
+  border-radius: var(--r-lg); padding: 14px 24px;
+  margin: 16px 0;
+  box-shadow: 0 4px 16px rgba(128,0,0,0.25);
+}
+.burl-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,0.6); }
+.burl-val { font-family: 'JetBrains Mono', monospace; font-size: .95rem; color: var(--gold-light); font-weight: 700; }
+
+.info-pill {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--white);
+  border: 2px solid var(--gold);
+  border-radius: var(--r-lg); padding: 14px 22px;
+  font-size: .9rem; color: var(--text); line-height: 1.7;
+  box-shadow: 0 2px 12px rgba(212,175,55,0.15);
+}
+.info-pill code { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--white); background: var(--maroon); padding: 2px 9px; border-radius: 6px; font-weight: 600; }
+
+.section-title {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 1.25rem; font-weight: 800; margin: 48px 0 20px;
+  color: var(--maroon);
+}
+.section-title::after { content:''; flex:1; height:2px; background: linear-gradient(to right, var(--maroon), transparent); }
+
+.resource-title {
+  font-size: 1rem; font-weight: 700; color: var(--text);
+  margin: 28px 0 10px; display: flex; align-items: center; gap: 10px;
+}
+.resource-title code {
+  font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+  color: var(--white); background: var(--maroon);
+  padding: 3px 12px; border-radius: 8px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(128,0,0,0.2);
+}
+
+.ep-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); overflow: hidden; margin-bottom: 14px;
+  box-shadow: var(--shadow-md);
+}
+.ep-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 15px 22px; border-bottom: 1px solid var(--border);
+  font-size: .88rem; transition: background .15s;
+}
+.ep-row:last-child { border-bottom: none; }
+.ep-row:hover { background: var(--maroon-soft); }
+
+.badge {
+  font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 700;
+  padding: 5px 12px; border-radius: 8px; min-width: 68px; text-align: center; flex-shrink: 0;
+}
+.b-get    { background: #EEF7FF; color: #2563EB; }
+.b-post   { background: #EFFFEE; color: #16A34A; }
+.b-put    { background: #FFFBEA; color: #B45309; }
+.b-delete { background: #FFF0F0; color: #DC2626; }
+.b-200    { background: #EFFFEE; color: #16A34A; }
+.b-400    { background: #FFFBEA; color: #B45309; }
+.b-404    { background: #FFF0F0; color: #DC2626; }
+.b-500    { background: #FFF0F0; color: #DC2626; }
+
+.ep-path { font-family: 'JetBrains Mono', monospace; font-size: .79rem; color: #444; }
+.ep-path .p { color: var(--gold); font-weight: 600; }
+.ep-desc { font-size: .82rem; color: var(--text-muted); margin-left: auto; }
+
+.ex-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); padding: 26px 30px; margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+.ex-card-title {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 800; font-size: 1rem; margin-bottom: 16px;
+  color: var(--text);
+}
+
+.code-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--maroon); margin: 14px 0 7px; }
+.code-block {
+  background: var(--code-bg); border-radius: var(--r-md);
+  padding: 18px 22px; font-family: 'JetBrains Mono', monospace;
+  font-size: .84rem; line-height: 1.9; overflow-x: auto; color: #d4d4d4;
+  border: 1px solid #2a2a2a;
+}
+
+.field-table { width: 100%; border-collapse: collapse; font-size: .81rem; margin: 8px 0; }
+.field-table th {
+  text-align: left; padding: 7px 12px; color: var(--text-muted);
+  font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+  border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.field-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+.field-table tr:last-child td { border-bottom: none; }
+.field-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--maroon); font-size: .78rem; }
+
+.chip-req { font-size: .62rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #FFF0F0; color: #DC2626; }
+.chip-opt { font-size: .62rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: var(--bg); color: var(--text-muted); }
+
+/* JSON colors */
+.jk { color: #D4AF37; }
+.js { color: #d4d4d4; }
+.jn { color: #c9a84c; }
+.jb { color: #cd853f; }
+.jx { color: #555; }
+.cm { color: #555; font-style: italic; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">📡</div>
+    <div class="logo-text"><span>JIGAGO</span> <em>Web Tester API</em></div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">🧪 Tester</a>
+    <a href="dokumentasi.html" class="active">📄 Docs</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-hero">
+    <h1>Dokumentasi <span>REST API</span></h1>
+    <p>Referensi lengkap endpoint, parameter, dan contoh request &amp; response untuk sistem <strong>db_mahasiswa</strong>.</p>
+    <div class="base-url-box">
+      <span class="burl-label">Base URL</span>
+      <span class="burl-val">https://jigago.infinityfreeapp.com/MyAPI/</span>
+    </div>
+    <br>
+    <div class="info-pill">
+      💡 Semua request &amp; response dalam format <code>JSON</code>.
+      Sertakan header <code>Content-Type: application/json</code> pada POST &amp; PUT.
+    </div>
+  </div>
+
+  <!-- ENDPOINT LIST -->
+  <div class="section-title">📌 Daftar Endpoint &amp; Fungsi</div>
+
+  <div class="resource-title">👤 Mahasiswa — <code>mahasiswa.php</code></div>
+  <div class="ep-card">
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/mahasiswa.php</span><span class="ep-desc">Ambil semua mahasiswa + nama jurusan</span></div>
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/mahasiswa.php?<span class="p">id_mhs={id}</span></span><span class="ep-desc">Ambil satu mahasiswa by ID</span></div>
+    <div class="ep-row"><span class="badge b-post">POST</span><span class="ep-path">/mahasiswa.php</span><span class="ep-desc">Tambah mahasiswa baru</span></div>
+    <div class="ep-row"><span class="badge b-put">PUT</span><span class="ep-path">/mahasiswa.php?<span class="p">id_mhs={id}</span></span><span class="ep-desc">Update mahasiswa by ID</span></div>
+    <div class="ep-row"><span class="badge b-delete">DELETE</span><span class="ep-path">/mahasiswa.php?<span class="p">id_mhs={id}</span></span><span class="ep-desc">Hapus mahasiswa by ID</span></div>
+  </div>
+
+  <div class="resource-title">🏛️ Jurusan — <code>jurusan.php</code></div>
+  <div class="ep-card">
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/jurusan.php</span><span class="ep-desc">Ambil semua jurusan</span></div>
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/jurusan.php?<span class="p">id_jurusan={id}</span></span><span class="ep-desc">Ambil satu jurusan by ID</span></div>
+    <div class="ep-row"><span class="badge b-post">POST</span><span class="ep-path">/jurusan.php</span><span class="ep-desc">Tambah jurusan baru</span></div>
+    <div class="ep-row"><span class="badge b-put">PUT</span><span class="ep-path">/jurusan.php?<span class="p">id_jurusan={id}</span></span><span class="ep-desc">Update jurusan by ID</span></div>
+    <div class="ep-row"><span class="badge b-delete">DELETE</span><span class="ep-path">/jurusan.php?<span class="p">id_jurusan={id}</span></span><span class="ep-desc">Hapus jurusan by ID</span></div>
+  </div>
+
+  <div class="resource-title">📚 Mata Kuliah — <code>mata_kuliah.php</code></div>
+  <div class="ep-card">
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/mata_kuliah.php</span><span class="ep-desc">Ambil semua mata kuliah + jurusan</span></div>
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/mata_kuliah.php?<span class="p">id_mk={id}</span></span><span class="ep-desc">Ambil satu mata kuliah by ID</span></div>
+    <div class="ep-row"><span class="badge b-post">POST</span><span class="ep-path">/mata_kuliah.php</span><span class="ep-desc">Tambah mata kuliah baru</span></div>
+    <div class="ep-row"><span class="badge b-put">PUT</span><span class="ep-path">/mata_kuliah.php?<span class="p">id_mk={id}</span></span><span class="ep-desc">Update mata kuliah by ID</span></div>
+    <div class="ep-row"><span class="badge b-delete">DELETE</span><span class="ep-path">/mata_kuliah.php?<span class="p">id_mk={id}</span></span><span class="ep-desc">Hapus mata kuliah by ID</span></div>
+  </div>
+
+  <div class="resource-title">📊 Nilai — <code>nilai.php</code></div>
+  <div class="ep-card">
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/nilai.php</span><span class="ep-desc">Ambil semua nilai (join mhs &amp; mk)</span></div>
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/nilai.php?<span class="p">id_nilai={id}</span></span><span class="ep-desc">Ambil satu nilai by ID</span></div>
+    <div class="ep-row"><span class="badge b-get">GET</span><span class="ep-path">/nilai.php?<span class="p">id_mhs={id}</span></span><span class="ep-desc">Ambil semua nilai satu mahasiswa</span></div>
+    <div class="ep-row"><span class="badge b-post">POST</span><span class="ep-path">/nilai.php</span><span class="ep-desc">Input nilai baru</span></div>
+    <div class="ep-row"><span class="badge b-put">PUT</span><span class="ep-path">/nilai.php?<span class="p">id_nilai={id}</span></span><span class="ep-desc">Koreksi skor nilai by ID</span></div>
+    <div class="ep-row"><span class="badge b-delete">DELETE</span><span class="ep-path">/nilai.php?<span class="p">id_nilai={id}</span></span><span class="ep-desc">Hapus nilai by ID</span></div>
+  </div>
+
+  <!-- REQUEST & RESPONSE -->
+  <div class="section-title">🔄 Contoh Request &amp; Response</div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-get">GET</span> Ambil Semua Mahasiswa</div>
+    <div class="code-label">Request</div>
+    <div class="code-block">GET https://jigago.infinityfreeapp.com/MyAPI/mahasiswa.php</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{
+  <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"Menampilkan semua data mahasiswa"</span> },
+  <span class="jk">"result"</span>: [
+    {
+      <span class="jk">"id_mhs"</span>: <span class="jn">1</span>, <span class="jk">"nim"</span>: <span class="js">"42510049"</span>,
+      <span class="jk">"nama_mhs"</span>: <span class="js">"Muhammad Nur Yasir Utomo"</span>,
+      <span class="jk">"alamat"</span>: <span class="js">"Jl. Perintis No 1"</span>,
+      <span class="jk">"umur"</span>: <span class="jn">20</span>, <span class="jk">"jenis_kelamin"</span>: <span class="js">"Laki-laki"</span>,
+      <span class="jk">"id_jurusan"</span>: <span class="jn">1</span>, <span class="jk">"nama_jurusan"</span>: <span class="js">"Teknik Komputer dan Jaringan"</span>
+    }
+  ]
+}</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-post">POST</span> Tambah Mahasiswa Baru</div>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Tipe</th><th>Status</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td>nim</td><td>string</td><td><span class="chip-req">required</span></td><td>Nomor Induk Mahasiswa</td></tr>
+        <tr><td>nama_mhs</td><td>string</td><td><span class="chip-req">required</span></td><td>Nama lengkap</td></tr>
+        <tr><td>alamat</td><td>string</td><td><span class="chip-req">required</span></td><td>Alamat mahasiswa</td></tr>
+        <tr><td>umur</td><td>integer</td><td><span class="chip-opt">optional</span></td><td>Umur</td></tr>
+        <tr><td>jenis_kelamin</td><td>string</td><td><span class="chip-opt">optional</span></td><td>Laki-laki / Perempuan</td></tr>
+        <tr><td>id_jurusan</td><td>integer</td><td><span class="chip-opt">optional</span></td><td>ID Jurusan (FK)</td></tr>
+      </tbody>
+    </table>
+    <div class="code-label">Request</div>
+    <div class="code-block">POST https://jigago.infinityfreeapp.com/MyAPI/mahasiswa.php
+Content-Type: application/json
+
+{ <span class="jk">"nim"</span>: <span class="js">"42510099"</span>, <span class="jk">"nama_mhs"</span>: <span class="js">"Budi Santoso"</span>, <span class="jk">"alamat"</span>: <span class="js">"Makassar"</span>, <span class="jk">"umur"</span>: <span class="jn">21</span>, <span class="jk">"id_jurusan"</span>: <span class="jn">1</span> }</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{ <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"1 data mahasiswa berhasil ditambahkan"</span> }, <span class="jk">"result"</span>: { <span class="jk">"id_mhs"</span>: <span class="jn">16</span>, <span class="cm">/* ... */</span> } }</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-put">PUT</span> Update Mahasiswa</div>
+    <div class="code-label">Request</div>
+    <div class="code-block">PUT https://jigago.infinityfreeapp.com/MyAPI/mahasiswa.php?id_mhs=1
+Content-Type: application/json
+
+{ <span class="jk">"nim"</span>: <span class="js">"42510049"</span>, <span class="jk">"nama_mhs"</span>: <span class="js">"Yasir Update"</span>, <span class="jk">"alamat"</span>: <span class="js">"Gowa"</span>, <span class="jk">"umur"</span>: <span class="jn">21</span>, <span class="jk">"id_jurusan"</span>: <span class="jn">1</span> }</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{ <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"Data mahasiswa id=1 berhasil diupdate"</span> } }</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-delete">DELETE</span> Hapus Mahasiswa</div>
+    <div class="code-label">Request</div>
+    <div class="code-block">DELETE https://jigago.infinityfreeapp.com/MyAPI/mahasiswa.php?id_mhs=1</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{ <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"Data mahasiswa id=1 berhasil dihapus"</span> } }</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-post">POST</span> Input Nilai Baru</div>
+    <div class="code-label">Request</div>
+    <div class="code-block">POST http://localhost/Tugas_API/MyAPI/nilai.php
+Content-Type: application/json
+
+{ <span class="jk">"id_mhs"</span>: <span class="jn">1</span>, <span class="jk">"id_mk"</span>: <span class="jn">2</span>, <span class="jk">"skor_nilai"</span>: <span class="jn">92</span> }</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{ <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"Nilai berhasil ditambahkan"</span> }, <span class="jk">"result"</span>: { <span class="jk">"id_nilai"</span>: <span class="jn">47</span>, <span class="jk">"skor_nilai"</span>: <span class="jn">92</span> } }</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-card-title"><span class="badge b-put">PUT</span> Koreksi Skor Nilai</div>
+    <div class="code-label">Request</div>
+    <div class="code-block">PUT http://localhost/Tugas_API/MyAPI/nilai.php?id_nilai=1
+Content-Type: application/json
+
+{ <span class="jk">"skor_nilai"</span>: <span class="jn">95</span> }</div>
+    <div class="code-label">Response — 200 OK</div>
+    <div class="code-block">{ <span class="jk">"status"</span>: { <span class="jk">"code"</span>: <span class="jn">200</span>, <span class="jk">"description"</span>: <span class="js">"Nilai id=1 berhasil diupdate"</span> }, <span class="jk">"result"</span>: { <span class="jk">"id_nilai"</span>: <span class="jn">1</span>, <span class="jk">"skor_nilai"</span>: <span class="jn">95</span> } }</div>
+  </div>
+
+  <!-- STATUS CODES -->
+  <div class="section-title">⚡ HTTP Status Codes</div>
+  <div class="ep-card">
+    <div class="ep-row"><span class="badge b-200">200</span><span style="font-size:.83rem;font-weight:600">OK</span><span class="ep-desc">Request berhasil diproses</span></div>
+    <div class="ep-row"><span class="badge b-400">400</span><span style="font-size:.83rem;font-weight:600">Bad Request</span><span class="ep-desc">Field wajib tidak diisi / parameter kurang</span></div>
+    <div class="ep-row"><span class="badge b-404">404</span><span style="font-size:.83rem;font-weight:600">Not Found</span><span class="ep-desc">Data dengan ID tersebut tidak ditemukan</span></div>
+    <div class="ep-row"><span class="badge b-404">405</span><span style="font-size:.83rem;font-weight:600">Method Not Allowed</span><span class="ep-desc">HTTP method tidak didukung endpoint ini</span></div>
+    <div class="ep-row"><span class="badge b-500">500</span><span style="font-size:.83rem;font-weight:600">Server Error</span><span class="ep-desc">Gagal koneksi database atau query error</span></div>
+  </div>
+
+</div>
+</body>
+</html>
+```
+
+---
+
+Itu semua koding lengkap untuk kedua file. Copy paste ke masing-masing file lalu buka:
+```
+http://localhost/Tugas_API/MyAPI/index.html

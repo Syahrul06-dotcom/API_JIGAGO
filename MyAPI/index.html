@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JIGAGO — Web Tester API</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maroon:      #800000;
+  --maroon-dark: #600000;
+  --maroon-soft: rgba(128,0,0,0.08);
+  --gold:        #D4AF37;
+  --gold-light:  #E8C84A;
+  --gold-soft:   rgba(212,175,55,0.12);
+  --white:       #FFFFFF;
+  --bg:          #F7F5F2;
+  --text:        #1A1A1A;
+  --text-muted:  #8A8A8A;
+  --border:      #E8E4DF;
+  --code-bg:     #141414;
+  --shadow-sm:   0 2px 12px rgba(0,0,0,0.06);
+  --shadow-md:   0 8px 32px rgba(0,0,0,0.10);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,0.12);
+  --r-sm:  10px;
+  --r-md:  16px;
+  --r-lg:  20px;
+  --r-xl:  28px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--maroon), #a00000);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(128,0,0,0.3);
+}
+.logo-text {
+  font-size: 1rem; font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.logo-text span { color: var(--maroon); }
+.logo-text em {
+  font-style: normal;
+  color: var(--gold);
+  font-size: .7rem;
+  background: var(--gold-soft);
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-links a {
+  text-decoration: none;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--maroon);
+  padding: 9px 20px;
+  border-radius: 12px;
+  transition: all .25s ease;
+  box-shadow: 0 3px 10px rgba(128,0,0,0.2);
+}
+.nav-links a:hover {
+  background: var(--maroon-dark);
+  box-shadow: 0 4px 14px rgba(128,0,0,0.35);
+  transform: translateY(-1px);
+}
+.nav-links a.active {
+  background: var(--gold);
+  color: var(--maroon-dark);
+  box-shadow: 0 3px 12px rgba(212,175,55,0.35);
+}
+
+/* ===== LAYOUT ===== */
+.app {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 272px;
+  min-width: 272px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px 12px;
+}
+
+.sidebar-label {
+  font-size: .67rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 10px 6px;
+}
+
+.ep-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 500;
+  color: #444;
+  transition: all .18s ease;
+  margin-bottom: 2px;
+}
+.ep-item:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+.ep-item.active {
+  background: var(--maroon-soft);
+  color: var(--maroon);
+  font-weight: 600;
+}
+.ep-item.active .mtag { box-shadow: 0 0 0 2px rgba(128,0,0,0.2); }
+
+.mtag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 6px;
+  min-width: 44px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.t-get    { background: #EEF7FF; color: #2563EB; }
+.t-post   { background: #EFFFEE; color: #16A34A; }
+.t-put    { background: #FFFBEA; color: #B45309; }
+.t-delete { background: #FFF0F0; color: #DC2626; }
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+
+/* ===== MAIN ===== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px;
+  gap: 16px;
+}
+
+/* ===== REQUEST CARD ===== */
+.request-card {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card-header-bar {
+  padding: 16px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.req-label {
+  font-size: .75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* URL BAR */
+.url-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 0;
+}
+
+.method-select {
+  background: var(--maroon);
+  color: var(--white);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .83rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  min-width: 100px;
+  appearance: none;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(128,0,0,0.25);
+  transition: background .2s;
+}
+.method-select:hover { background: var(--maroon-dark); }
+.method-select option { background: #1a1a1a; color: white; }
+
+.url-input {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .83rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.url-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--maroon) 0%, #9a0000 100%);
+  color: var(--gold-light);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 10px 28px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .88rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  box-shadow: 0 3px 14px rgba(128,0,0,0.3);
+  transition: all .2s ease;
+}
+.send-btn:hover {
+  background: linear-gradient(135deg, #9a0000 0%, var(--maroon-dark) 100%);
+  box-shadow: 0 6px 20px rgba(128,0,0,0.4);
+  transform: translateY(-1px);
+}
+.send-btn:active { transform: translateY(0); }
+
+/* TABS */
+.tabs-row {
+  display: flex;
+  gap: 2px;
+  padding: 12px 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 8px 16px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: all .18s ease;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--text); background: var(--bg); }
+.tab-btn.active {
+  color: var(--maroon);
+  border-bottom-color: var(--maroon);
+}
+
+.tab-pane { display: none; padding: 14px 20px; }
+.tab-pane.active { display: block; }
+
+.body-ta {
+  width: 100%;
+  height: 110px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  line-height: 1.7;
+  outline: none;
+  resize: vertical;
+  transition: border-color .2s, box-shadow .2s;
+}
+.body-ta:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+.params-grid { display: flex; flex-direction: column; gap: 6px; }
+.param-row { display: flex; gap: 8px; }
+.param-input {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.param-input:focus { border-color: var(--gold); }
+.hint-text {
+  font-size: .72rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.hint-text b { color: var(--gold); }
+
+/* ===== RESPONSE CARD ===== */
+.response-card {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.res-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.res-title {
+  font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.status-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem; font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  transition: all .3s ease;
+}
+.sp-idle    { background: #F0F0F0; color: #999; }
+.sp-ok      { background: #EFFFEE; color: #16A34A; border: 1px solid #BBF7D0; }
+.sp-err     { background: #FFF0F0; color: #DC2626; border: 1px solid #FECACA; }
+.time-pill {
+  font-size: .72rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: auto;
+}
+
+.res-tabs-row {
+  display: flex; gap: 2px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.res-tab {
+  padding: 8px 14px;
+  font-size: .78rem; font-weight: 600;
+  color: var(--text-muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+}
+.res-tab:hover { color: var(--text); }
+.res-tab.active { color: var(--maroon); border-bottom-color: var(--maroon); }
+
+.res-body-wrap {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.res-body {
+  flex: 1;
+  background: var(--code-bg);
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+  padding: 18px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  line-height: 1.8;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  color: #d4d4d4;
+}
+
+.res-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 10px;
+  text-align: center;
+}
+.res-placeholder .icon {
+  font-size: 2.5rem;
+  opacity: .3;
+}
+.res-placeholder p {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #555;
+  font-size: .85rem;
+  line-height: 1.7;
+}
+.res-placeholder strong { color: var(--gold); }
+
+/* JSON Syntax */
+.jk { color: #D4AF37; }
+.js { color: #d4d4d4; }
+.jn { color: #c9a84c; }
+.jb { color: #cd853f; }
+.jx { color: #555; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ccc; }
+
+/* Animations */
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.request-card, .response-card {
+  animation: fadeSlide .35s ease forwards;
+}
+.response-card { animation-delay: .08s; opacity: 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">📡</div>
+      <div class="logo-text">
+        <span>JIGAGO</span>
+        <em>Web Tester API</em>
+      </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="active">🧪 Tester</a>
+    <a href="dokumentasi.html">📄 Docs</a>
+  </div>
+</nav>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-label">GET — Tampil Data</div>
+    <div class="ep-item" onclick="load('GET','mahasiswa','','')">
+      <span class="mtag t-get">GET</span> Semua Mahasiswa
+    </div>
+    <div class="ep-item" onclick="load('GET','mahasiswa','id_mhs=1','')">
+      <span class="mtag t-get">GET</span> Mahasiswa by ID
+    </div>
+    <div class="ep-item" onclick="load('GET','jurusan','','')">
+      <span class="mtag t-get">GET</span> Semua Jurusan
+    </div>
+    <div class="ep-item" onclick="load('GET','mata_kuliah','','')">
+      <span class="mtag t-get">GET</span> Semua Mata Kuliah
+    </div>
+    <div class="ep-item" onclick="load('GET','nilai','','')">
+      <span class="mtag t-get">GET</span> Semua Nilai
+    </div>
+    <div class="ep-item" onclick="load('GET','nilai','id_mhs=1','')">
+      <span class="mtag t-get">GET</span> Nilai by Mahasiswa
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">POST — Tambah Data</div>
+    <div class="ep-item" onclick="load('POST','mahasiswa','',`{\n  &quot;nim&quot;: &quot;42510099&quot;,\n  &quot;nama_mhs&quot;: &quot;Nama Baru&quot;,\n  &quot;alamat&quot;: &quot;Makassar&quot;,\n  &quot;umur&quot;: 20,\n  &quot;jenis_kelamin&quot;: &quot;Laki-laki&quot;,\n  &quot;id_jurusan&quot;: 1\n}`)">
+      <span class="mtag t-post">POST</span> Tambah Mahasiswa
+    </div>
+    <div class="ep-item" onclick="load('POST','jurusan','',`{\n  &quot;nama_jurusan&quot;: &quot;Teknik Informatika&quot;\n}`)">
+      <span class="mtag t-post">POST</span> Tambah Jurusan
+    </div>
+    <div class="ep-item" onclick="load('POST','mata_kuliah','',`{\n  &quot;nama_mk&quot;: &quot;Basis Data&quot;,\n  &quot;sks&quot;: 3,\n  &quot;id_jurusan&quot;: 1\n}`)">
+      <span class="mtag t-post">POST</span> Tambah Mata Kuliah
+    </div>
+    <div class="ep-item" onclick="load('POST','nilai','',`{\n  &quot;id_mhs&quot;: 1,\n  &quot;id_mk&quot;: 2,\n  &quot;skor_nilai&quot;: 90\n}`)">
+      <span class="mtag t-post">POST</span> Input Nilai Baru
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">PUT — Update Data</div>
+    <div class="ep-item" onclick="load('PUT','mahasiswa','id_mhs=1',`{\n  &quot;nim&quot;: &quot;42510049&quot;,\n  &quot;nama_mhs&quot;: &quot;Nama Update&quot;,\n  &quot;alamat&quot;: &quot;Gowa&quot;,\n  &quot;umur&quot;: 21,\n  &quot;jenis_kelamin&quot;: &quot;Laki-laki&quot;,\n  &quot;id_jurusan&quot;: 1\n}`)">
+      <span class="mtag t-put">PUT</span> Update Mahasiswa
+    </div>
+    <div class="ep-item" onclick="load('PUT','nilai','id_nilai=1',`{\n  &quot;skor_nilai&quot;: 95\n}`)">
+      <span class="mtag t-put">PUT</span> Koreksi Skor Nilai
+    </div>
+    <div class="ep-item" onclick="load('PUT','mata_kuliah','id_mk=1',`{\n  &quot;nama_mk&quot;: &quot;Basis Data Lanjut&quot;,\n  &quot;sks&quot;: 4,\n  &quot;id_jurusan&quot;: 1\n}`)">
+      <span class="mtag t-put">PUT</span> Update Mata Kuliah
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">DELETE — Hapus Data</div>
+    <div class="ep-item" onclick="load('DELETE','mahasiswa','id_mhs=1','')">
+      <span class="mtag t-delete">DEL</span> Hapus Mahasiswa
+    </div>
+    <div class="ep-item" onclick="load('DELETE','nilai','id_nilai=1','')">
+      <span class="mtag t-delete">DEL</span> Hapus Nilai
+    </div>
+    <div class="ep-item" onclick="load('DELETE','mata_kuliah','id_mk=1','')">
+      <span class="mtag t-delete">DEL</span> Hapus Mata Kuliah
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- REQUEST CARD -->
+    <div class="request-card">
+      <div class="card-header-bar">
+        <span class="card-title">Request</span>
+        <span class="req-label" id="req-label">Pilih endpoint dari sidebar</span>
+      </div>
+
+      <div class="url-bar">
+        <select id="method-select" class="method-select">
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>DELETE</option>
+        </select>
+        <input type="text" id="url-input" class="url-input"
+               value="https://jigago.infinityfreeapp.com/MyAPI/mahasiswa.php"
+               placeholder="https://...">
+        <button class="send-btn" onclick="sendReq()">Send ✦</button>
+      </div>
+
+      <div class="tabs-row" id="req-tabs">
+        <div class="tab-btn active" onclick="switchTab('body',this)">Body</div>
+        <div class="tab-btn" onclick="switchTab('params',this)">Params</div>
+        <div class="tab-btn" onclick="switchTab('headers',this)">Headers</div>
+      </div>
+
+      <div id="pane-body" class="tab-pane active">
+        <textarea id="body-input" class="body-ta"
+                  placeholder="// Pilih endpoint dari sidebar untuk isi otomatis...&#10;// Atau ketik JSON manual di sini"></textarea>
+      </div>
+
+      <div id="pane-params" class="tab-pane">
+        <div class="params-grid">
+          <div class="param-row">
+            <input type="text" id="p-key-1" class="param-input" placeholder="Key (e.g. id_mhs)">
+            <input type="text" id="p-val-1" class="param-input" placeholder="Value (e.g. 1)">
+          </div>
+          <div class="param-row">
+            <input type="text" id="p-key-2" class="param-input" placeholder="Key">
+            <input type="text" id="p-val-2" class="param-input" placeholder="Value">
+          </div>
+        </div>
+        <div class="hint-text">Parameter ditambahkan sebagai query string: <b>?key=value</b></div>
+      </div>
+
+      <div id="pane-headers" class="tab-pane">
+        <div class="params-grid">
+          <div class="param-row">
+            <input type="text" class="param-input" value="Content-Type" readonly>
+            <input type="text" class="param-input" value="application/json" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESPONSE CARD -->
+    <div class="response-card">
+      <div class="res-header">
+        <span class="res-title">Response</span>
+        <span id="status-pill" class="status-pill sp-idle">—</span>
+        <span id="time-pill" class="time-pill"></span>
+      </div>
+      <div class="res-tabs-row" id="res-tabs">
+        <div class="res-tab active" onclick="switchResTab('pretty',this)">Pretty</div>
+        <div class="res-tab" onclick="switchResTab('raw',this)">Raw</div>
+      </div>
+      <div class="res-body-wrap">
+        <div id="res-body" class="res-body">
+          <div class="res-placeholder">
+            <div class="icon">🚀</div>
+            <p>Pilih endpoint dari sidebar<br>lalu klik <strong>Send ✦</strong> untuk melihat respons</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let raw = '', resMode = 'pretty';
+
+function switchTab(name, el) {
+  document.getElementById('req-tabs').querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  ['body','params','headers'].forEach(n => document.getElementById('pane-'+n).classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+name).classList.add('active');
+}
+
+function switchResTab(name, el) {
+  resMode = name;
+  document.getElementById('res-tabs').querySelectorAll('.res-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('res-body').innerHTML = name === 'raw' ? esc(raw) : hl(raw);
+}
+
+function load(method, ep, params, body) {
+  document.getElementById('method-select').value = method;
+  document.getElementById('url-input').value = `https://jigago.infinityfreeapp.com/MyAPI/${ep}.php`;
+  ['p-key-1','p-val-1','p-key-2','p-val-2'].forEach(id => document.getElementById(id).value = '');
+  if (params) {
+    const [k,v] = params.split('=');
+    document.getElementById('p-key-1').value = k||'';
+    document.getElementById('p-val-1').value = v||'';
+  }
+  document.getElementById('body-input').value = body.replace(/&quot;/g, '"');
+  document.getElementById('req-label').textContent = `${method}  /${ep}.php${params ? '?'+params : ''}`;
+  document.querySelectorAll('.ep-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function buildUrl() {
+  let url = document.getElementById('url-input').value.trim();
+  const k1=document.getElementById('p-key-1').value.trim(), v1=document.getElementById('p-val-1').value.trim();
+  const k2=document.getElementById('p-key-2').value.trim(), v2=document.getElementById('p-val-2').value.trim();
+  const ps=[];
+  if(k1&&v1) ps.push(`${k1}=${v1}`);
+  if(k2&&v2) ps.push(`${k2}=${v2}`);
+  if(ps.length) url += '?'+ps.join('&');
+  return url;
+}
+
+async function sendReq() {
+  const method  = document.getElementById('method-select').value;
+  const url     = buildUrl();
+  const bodyTxt = document.getElementById('body-input').value.trim();
+  const pill    = document.getElementById('status-pill');
+  const tPill   = document.getElementById('time-pill');
+  const resEl   = document.getElementById('res-body');
+
+  pill.textContent = '...'; pill.className = 'status-pill sp-idle';
+  tPill.textContent = '';
+  resEl.innerHTML = '<div class="res-placeholder"><div class="icon" style="animation:spin .8s linear infinite">⏳</div><p>Mengirim request...</p></div>';
+
+  const opts = { method, headers: {'Content-Type':'application/json'} };
+  if (['POST','PUT'].includes(method) && bodyTxt) opts.body = bodyTxt;
+
+  const t0 = performance.now();
+  try {
+    const res  = await fetch(url, opts);
+    const ms   = Math.round(performance.now()-t0);
+    const text = await res.text();
+    raw = text;
+    pill.textContent = `${res.status} ${res.statusText}`;
+    pill.className   = `status-pill ${res.ok ? 'sp-ok' : 'sp-err'}`;
+    tPill.textContent = `${ms} ms`;
+    resEl.innerHTML  = resMode==='raw' ? esc(raw) : hl(raw);
+  } catch(e) {
+    raw = e.toString();
+    pill.textContent = 'Error'; pill.className = 'status-pill sp-err';
+    resEl.innerHTML = `<div class="res-placeholder"><div class="icon">⚠️</div><p style="color:#f87171">${esc(e.toString())}<br><br>Pastikan XAMPP aktif dan folder ada di htdocs</p></div>`;
+  }
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function hl(json){
+  let o; try{o=JSON.parse(json);}catch(e){return esc(json);}
+  return JSON.stringify(o,null,2).replace(
+    /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    m => {
+      if(/^"/.test(m)) return/:$/.test(m)?`<span class="jk">${esc(m)}</span>`:`<span class="js">${esc(m)}</span>`;
+      if(/true|false/.test(m)) return `<span class="jb">${m}</span>`;
+      if(/null/.test(m)) return `<span class="jx">${m}</span>`;
+      return `<span class="jn">${m}</span>`;
+    }
+  );
+}
+
+document.addEventListener('keydown', e => { if(e.ctrlKey && e.key==='Enter') sendReq(); });
+</script>
+</body>
+</html>
